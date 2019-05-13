@@ -57,12 +57,16 @@ public class RelativeMovement : MonoBehaviour
 
             movement = Vector3.ClampMagnitude(movement, moveSpeed);
 
-            if (!Input.GetMouseButton(0))
+            if (Input.GetMouseButton(1))
             {
                 Quaternion tmp = target.rotation;
                 target.eulerAngles = new Vector3(0, target.eulerAngles.y, 0);
                 movement = target.TransformDirection(movement);
                 target.rotation = tmp;
+            }
+            else
+            {
+                movement = transform.rotation * movement;
             }
         }
 

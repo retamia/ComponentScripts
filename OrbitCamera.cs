@@ -32,13 +32,18 @@ public class OrbitCamera : MonoBehaviour
 
     void LateUpdate()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (Input.GetMouseButton(0) || Input.GetMouseButton(1)) 
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             rotY += Input.GetAxis("Mouse X") * rotSpeed * 3;
             rotX -= Input.GetAxis("Mouse Y") * rotSpeed * 2;
 
             rotX = Mathf.Clamp(rotX, 1f, 89.0f);
-        } 
+        }
 
         Quaternion rotation = Quaternion.Euler(rotX, rotY, 0);
         transform.rotation = rotation;
@@ -48,16 +53,15 @@ public class OrbitCamera : MonoBehaviour
 
         distance = Mathf.Lerp(distance, targetDistance, Time.deltaTime * 4f); 
 
-        Vector3 targetPosition = target.position;
-        transform.position = targetPosition - rotation * new Vector3(0, 0, distance);
+        transform.position = target.position - rotation * new Vector3(0, 0, distance);
+
+        targetRotation = target.rotation.eulerAngles;
 
         if (Input.GetMouseButton(1))
         {
-            targetRotation = target.rotation.eulerAngles;
-            targetRotation.y = transform.rotation.eulerAngles.y;
+            targetRotation.y = transform.rotation.eulerAngles.y;    
         }
 
-        targetCurRotation = Quaternion.Lerp(Quaternion.Euler(targetCurRotation), Quaternion.Euler(targetRotation), Time.deltaTime * targetRotateSpeed).eulerAngles;
-        target.transform.rotation = Quaternion.Euler(targetCurRotation);
+        target.transform.rotation = Quaternion.Lerp(target.transform.rotation, Quaternion.Euler(targetRotation), Time.deltaTime * targetRotateSpeed);
     }
 }
